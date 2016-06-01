@@ -112,7 +112,7 @@ def load_modules_from_hypes(hypes):
     hypes, data_input, arch, objective, solver
     """
     base_path = hypes['dirs']['base_path']
-    _add_pathes_to_sys(hypes)
+    _add_paths_to_sys(hypes)
     f = os.path.join(base_path, hypes['model']['input_file'])
     data_input = imp.load_source("input", f)
     f = os.path.join(base_path, hypes['model']['architecture_file'])
@@ -125,7 +125,7 @@ def load_modules_from_hypes(hypes):
     return data_input, arch, objective, solver
 
 
-def _add_pathes_to_sys(hypes):
+def _add_paths_to_sys(hypes):
     '''Add all module dirs to syspath.
 
     This adds the dirname of all modules to path.
@@ -190,7 +190,7 @@ def load_hypes_from_logdir(logdir):
     with open(hypes_fname, 'r') as f:
         logging.info("f: %s", f)
         hypes = json.load(f)
-    _add_pathes_to_sys(hypes)
+    _add_paths_to_sys(hypes)
     hypes['dirs']['base_path'] = logdir
 
     return hypes
