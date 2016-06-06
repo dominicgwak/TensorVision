@@ -8,8 +8,29 @@ from __future__ import print_function
 
 import logging
 
+import os
 import numpy as np
 import tensorflow as tf
+
+
+def load_weights(checkpoint_dir, sess, saver):
+    """
+    Load the weights of a model stored in saver.
+
+    Parameters
+    ----------
+    checkpoint_dir : str
+        The directory of checkpoints.
+    sess : tf.Session
+        A Session to use to restore the parameters.
+    saver : tf.train.Saver
+    """
+    ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
+    if ckpt and ckpt.model_checkpoint_path:
+        logging.info(ckpt.model_checkpoint_path)
+        file = os.path.basename(ckpt.model_checkpoint_path)
+        checkpoint_path = os.path.join(checkpoint_dir, file)
+        saver.restore(sess, checkpoint_path)
 
 
 def build_graph(hypes, modules, train=True):

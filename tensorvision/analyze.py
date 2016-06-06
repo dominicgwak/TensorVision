@@ -34,26 +34,6 @@ flags.DEFINE_string('logdir', None,
                     'Directory where logs are stored.')
 
 
-def _load_weights(checkpoint_dir, sess, saver):
-    """
-    Load the weights of a model stored in saver.
-
-    Parameters
-    ----------
-    checkpoint_dir : str
-        The directory of checkpoints.
-    sess : tf.Session
-        A Session to use to restore the parameters.
-    saver : tf.train.Saver
-    """
-    ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
-    if ckpt and ckpt.model_checkpoint_path:
-        logging.info(ckpt.model_checkpoint_path)
-        file = os.path.basename(ckpt.model_checkpoint_path)
-        checkpoint_path = os.path.join(checkpoint_dir, file)
-        saver.restore(sess, checkpoint_path)
-
-
 def do_analyze(logdir):
     """
     Analyze a trained model.
@@ -82,7 +62,7 @@ def do_analyze(logdir):
         sess_coll = core.start_tv_session(hypes)
         sess, saver, summary_op, summary_writer, coord, threads = sess_coll
 
-        _load_weights(logdir, sess, saver)
+        core.load_weights(logdir, sess, saver)
         # Start the data load
         data_input.start_enqueuing_threads(hypes, q['val'], 'val', sess,
                                            hypes['dirs']['data_dir'])
