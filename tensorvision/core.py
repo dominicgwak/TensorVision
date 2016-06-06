@@ -24,6 +24,11 @@ def load_weights(checkpoint_dir, sess, saver):
     sess : tf.Session
         A Session to use to restore the parameters.
     saver : tf.train.Saver
+
+    Returns
+    -----------
+    int
+        training step of checkpoint
     """
     ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
     if ckpt and ckpt.model_checkpoint_path:
@@ -31,6 +36,7 @@ def load_weights(checkpoint_dir, sess, saver):
         file = os.path.basename(ckpt.model_checkpoint_path)
         checkpoint_path = os.path.join(checkpoint_dir, file)
         saver.restore(sess, checkpoint_path)
+        return int(file.split('-')[1])
 
 
 def build_graph(hypes, modules, train=True):

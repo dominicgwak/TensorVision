@@ -348,6 +348,50 @@ def do_training(hypes):
         coord.join(threads)
 
 
+def continue_training(logdir):
+    """
+    Continues training of a model.
+
+    This will load model files and weights found in logdir and continues
+    an aborted training.
+
+    Parameters
+    ----------
+    logdir : string
+        Directory with logs.
+    """
+    hypes = utils.load_hypes_from_logdir(logdir)
+    modules = utils.load_modules_from_logdir(logdir)
+    data_input, arch, objective, solver = modules
+
+    # Tell TensorFlow that the model will be built into the default Graph.
+    with tf.Graph().as_default() as graph:
+
+        # build the graph based on the loaded modules
+        graph_ops = build_training_graph(hypes, modules)
+        q = graph_ops[0]
+
+        # prepaire the tv session
+        sess_coll = core.start_tv_session(hypes)
+        sess, saver, summary_op, summary_writer, coord, threads = sess_coll
+
+        # Load weights from logdir
+        cur_step = core.load_weights(logdir, sess, saver)
+
+        # Start the data load
+        _start_enqueuing_threads(hypes, q, sess, data_input)
+
+        # And then after everything is built, start the training loop.
+        start_time = time.time()
+        for step in xrange(cur_step+1, hypes['solver']['max_steps']):
+            start_time = run_training_step(hypes, step, start_time,
+                                           graph_ops, sess_coll)
+
+        # stopping input Threads
+        coord.request_stop()
+        coord.join(threads)
+
+
 def main(_):
     """Run main function."""
     if FLAGS.hypes is None:
