@@ -76,6 +76,30 @@ def _start_enqueuing_threads(hypes, q, sess, data_input):
                                                hypes['dirs']['data_dir'])
 
 
+def _create_filewrite_handler(logging_file, mode='w'):
+    """
+    Creates a filewriter handler.
+
+    A copy of the output will be written to logging_file.
+
+    Parameters
+    ----------
+    logging_file : string
+        File to log output
+
+    Returns
+    ----------
+    The filewriter handler
+    """
+    filewriter = logging.FileHandler(logging_file, mode=mode)
+    formatter = logging.Formatter(
+        '%(asctime)s %(name)-3s %(levelname)-3s %(message)s')
+    filewriter.setLevel(logging.INFO)
+    filewriter.setFormatter(formatter)
+    logging.getLogger('').addHandler(filewriter)
+    return filewriter
+
+
 def initialize_training_folder(hypes):
     """
     Creating the training folder and copy all model files into it.
@@ -95,12 +119,7 @@ def initialize_training_folder(hypes):
     # Creating an additional logging saving the console outputs
     # into the training folder
     logging_file = os.path.join(hypes['dirs']['output_dir'], "output.log")
-    filewriter = logging.FileHandler(logging_file, mode='w')
-    formatter = logging.Formatter(
-        '%(asctime)s %(name)-3s %(levelname)-3s %(message)s')
-    filewriter.setLevel(logging.INFO)
-    filewriter.setFormatter(formatter)
-    logging.getLogger('').addHandler(filewriter)
+    _create_filewrite_handler(logging_file)
 
     # TODO: read more about loggers and make file logging neater.
 
@@ -363,6 +382,10 @@ def continue_training(logdir):
     hypes = utils.load_hypes_from_logdir(logdir)
     modules = utils.load_modules_from_logdir(logdir)
     data_input, arch, objective, solver = modules
+
+    # append output to output.log
+    logging_file = os.path.join(logdir, 'output.log')
+    _create_filewrite_handler(logging_file, mode='a')
 
     # Tell TensorFlow that the model will be built into the default Graph.
     with tf.Graph().as_default() as graph:
