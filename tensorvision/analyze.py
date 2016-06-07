@@ -288,7 +288,7 @@ def merge_cms(cm1, cm2):
 def main(_):
     """Run main function."""
     if FLAGS.logdir is None:
-        logging.error("No logdir are given.")
+        logging.error("No logdir is given.")
         logging.error("Usage: tv-analyze --logdir dir")
         exit(1)
 
