@@ -53,7 +53,8 @@ def _copy_parameters_to_traindir(hypes, input_file, target_name, target_dir):
         directory where training data is saved
     """
     target_file = os.path.join(target_dir, target_name)
-    input_file = os.path.join(hypes['dirs']['base_path'], input_file)
+    input_file = os.path.os.path.realpath(
+        os.path.join(hypes['dirs']['base_path'], input_file))
     copyfile(input_file, target_file)
 
 
