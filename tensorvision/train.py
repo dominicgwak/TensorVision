@@ -397,6 +397,8 @@ def do_training(hypes):
             start_time = run_training_step(hypes, step, start_time,
                                            graph_ops, sess_coll, objective,
                                            image_pl, softmax)
+            if hasattr(solver, 'update_learning_rate'):
+                solver.update_learning_rate(hypes, step)
 
         # stopping input Threads
         coord.request_stop()
@@ -434,6 +436,13 @@ def continue_training(logdir):
         sess_coll = core.start_tv_session(hypes)
         sess, saver, summary_op, summary_writer, coord, threads = sess_coll
 
+        with tf.name_scope('Validation'):
+            image_pl, label_pl = _create_input_placeholder()
+            image = tf.expand_dims(image_pl, 0)
+            softmax = core.build_inference_graph(hypes, modules,
+                                                 image=image,
+                                                 label=label_pl)
+
         # Load weights from logdir
         cur_step = core.load_weights(logdir, sess, saver)
 
@@ -444,7 +453,8 @@ def continue_training(logdir):
         start_time = time.time()
         for step in xrange(cur_step+1, hypes['solver']['max_steps']):
             start_time = run_training_step(hypes, step, start_time,
-                                           graph_ops, sess_coll)
+                                           graph_ops, sess_coll, objective,
+                                           image_pl, softmax)
 
         # stopping input Threads
         coord.request_stop()
