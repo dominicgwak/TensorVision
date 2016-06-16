@@ -228,6 +228,8 @@ def do_eval(hypes, eval_list, phase, sess):
     """
     # And run one epoch of eval.
     # Checking for List for compability
+    if eval_list[phase] is None:
+        return [''], [0.0]
     if type(eval_list[phase]) is list:
         eval_names, eval_op = zip(*eval_list[phase])
 
