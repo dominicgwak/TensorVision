@@ -264,13 +264,6 @@ def _do_evaluation(hypes, step, sess_coll, eval_dict):
                                  'val', step, sess)
 
 
-def _print_eval_dict(eval_dict):
-    logging.info('Results of Evaluation.')
-    for name, value in eval_dict:
-            logging.info('%s : % 0.04f ' % (name, value))
-    return
-
-
 def _write_eval_dict_to_summary(eval_dict, summary_writer, global_step):
     summary = tf.Summary()
     for name, result in eval_dict:
@@ -300,7 +293,7 @@ def _do_python_evaluation(hypes, step, sess_coll, objective,
     sess, saver, summary_op, summary_writer, coord, threads = sess_coll
     eval_dict, images = objective.tensor_eval(hypes, sess, image_pl, softmax)
 
-    _print_eval_dict(eval_dict)
+    utils.print_eval_dict(eval_dict)
     _write_eval_dict_to_summary(eval_dict, summary_writer, step)
     _write_images_to_summary(images, summary_writer, step)
 
