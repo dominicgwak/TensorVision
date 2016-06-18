@@ -65,9 +65,9 @@ def set_dirs(hypes, hypes_fname):
         else:
             json_name = hypes_fname.split('/')[-1].replace('.json', '')
             date = datetime.now().strftime('%Y_%m_%d_%H.%M')
-            run_name = '%s_%s' % (json_name, date)
             if FLAGS.name is not None:
-                run_name = run_name + "_" + FLAGS.name
+                json_name = json_name + "_" + FLAGS.name
+            run_name = '%s_%s' % (json_name, date)
             output_dir = os.path.join(runs_dir, run_name)
 
         hypes['dirs']['output_dir'] = output_dir
