@@ -32,7 +32,7 @@ flags.DEFINE_string('name', None,
 
 flags.DEFINE_string('project', None,
                     ('If set, run will be saved to',
-                         '`$TV_DIR_RUNS/project/run_name`.')
+                        '`$TV_DIR_RUNS/project/run_name`.'))
 
 flags.DEFINE_string('hypes', None,
                     'File storing model parameters.')
