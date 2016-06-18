@@ -56,6 +56,10 @@ def set_dirs(hypes, hypes_fname):
         else:
             runs_dir = os.path.join(base_path, 'RUNS')
 
+        # test for project dir
+        if hasattr(FLAGS, 'project') and FLAGS.project is not None:
+            runs_dir = os.path.join(runs_dir, FLAGS.project)
+
         if not FLAGS.save and FLAGS.name is None:
             output_dir = os.path.join(runs_dir, 'debug')
         else:
